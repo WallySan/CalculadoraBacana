@@ -1,94 +1,100 @@
-import streamlit as pd
 import streamlit as st
-import pandas as pd
 
-# 1. CONFIGURAÇÃO DA PÁGINA
+# 1. CONFIGURAÇÃO DA PÁGINA (Tema escuro traz mais requinte para carros)
 st.set_page_config(
-    page_title="Calculadora de Orçamento Freelance",
-    page_icon="💰",
-    layout="centered"
+    page_title="Apex Motors | Premium Club",
+    page_icon="🏎️",
+    layout="wide"
 )
 
-# 2. BACKEND BÁSICO (Simulado com Session State)
-# O session_state funciona como um banco de dados temporário na memória do navegador.
-if "historico_orcamenentos" not in st.session_state:
-    st.session_state.historico_orcamenentos = []
-
-# 3. CABEÇALHO DO APP
-st.title("💰 Calculadora de Orçamento Freelance")
-st.markdown("""
-Esta ferramenta ajuda você a calcular o valor justo para o seu projeto freela 
-com base nas suas horas de trabalho, custos e margem de lucro.
-""")
+# 2. HEADER / MENU SUPERIOR SIMULADO
+col_logo, col_vazio, col_redes = st.columns([2, 5, 2])
+with col_logo:
+    st.markdown("### 🏎️ **APEX MOTORS**")
+with col_redes:
+    st.markdown("<p style='text-align: right; color: gray;'>Fale Conosco: 0800 777 9000</p>", unsafe_allow_html=True)
 
 st.divider()
 
-# 4. FORMULÁRIO DE ENTRADA DE DADOS
-st.subheader("📊 Dados do Projeto")
+# 3. HERO SECTION (Chamada Principal)
+# Usando colunas para colocar o texto de impacto do lado esquerdo e o carro principal do direito
+st.markdown("<h1 style='text-align: center; font-size: 3rem;'>O Futuro da Performance Chegou</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 1.2rem;'>Conheça a nova linha Hyper-E de esportivos elétricos e híbridos de alta performance.</p>", unsafe_allow_html=True)
 
-# Organizando os campos em colunas para ficar visualmente limpo
-col1, col2 = st.columns(2)
+st.write("") # Espaçador
 
-with col1:
-    nome_projeto = st.text_input("Nome do Projeto", placeholder="Ex: Site Institucional")
-    valor_hora = st.number_input("Quanto vale sua hora? (R$)", min_value=10.0, value=50.0, step=5.0)
-    horas_estimadas = st.number_input("Horas estimadas de trabalho", min_value=1, value=20, step=1)
+col_hero_txt, col_hero_img = st.columns([4, 6], gap="large")
 
-with col2:
-    custos_extras = st.number_input("Custos extras (Template, API, etc.) (R$)", min_value=0.0, value=0.0, step=10.0)
-    margem_lucro = st.slider("Margem de lucro desejada (%)", min_value=0, max_value=100, value=20, step=5)
-
-# 5. LÓGICA DE CÁLCULO
-# Cálculo baseado nas variáveis inseridas pelo usuário
-custo_tempo = valor_hora * horas_estimadas
-subtotal = custo_tempo + custos_extras
-valor_lucro = subtotal * (margem_lucro / 100)
-preco_final = subtotal + valor_lucro
-
-st.divider()
-
-# 6. EXIBIÇÃO DOS RESULTADOS
-st.subheader("💵 Resumo do Orçamento")
-
-# Exibindo os resultados em cards (metrics)
-c1, c2, c3 = st.columns(3)
-c1.metric("Custo do Tempo", f"R$ {custo_tempo:,.2f}")
-c2.metric("Margem de Lucro", f"R$ {valor_lucro:,.2f}")
-c3.metric("Preço Final Mínimo", f"R$ {preco_final:,.2f}", delta_color="inverse")
-
-# 7. BOTÃO PARA SALVAR (Ação do Backend)
-if st.button("💾 Salvar Orçamento no Histórico", type="primary"):
-    if nome_projeto.strip() == "":
-        st.error("Por favor, dê um nome ao projeto antes de salvar!")
-    else:
-        # Criando um dicionário que representa nossa "linha" no banco de dados
-        novo_registro = {
-            "Projeto": nome_projeto,
-            "Valor/Hora": f"R$ {valor_hora:.2f}",
-            "Horas": horas_estimadas,
-            "Custos Extras": f"R$ {custos_extras:.2f}",
-            "Lucro (%)": f"{margem_lucro}%",
-            "Preço Final": preco_final
-        }
-        # Adicionando a lista que está na memória do Streamlit
-        st.session_state.historico_orcamenentos.append(novo_registro)
-        st.success(f"Orçamento para '{nome_projeto}' salvo com sucesso!")
-
-st.divider()
-
-# 8. EXIBIÇÃO DO HISTÓRICO
-st.subheader("📚 Orçamentos Salvos (Sessão Atual)")
-
-if len(st.session_state.historico_orcamenentos) > 0:
-    # Convertendo a lista de dicionários em um DataFrame do Pandas para exibição bonita
-    df = pd.DataFrame(st.session_state.historico_orcamenentos)
+with col_hero_txt:
+    st.markdown("## **Apex Hyper-E Sport**")
+    st.markdown("""
+    * **0 a 100 km/h:** Em apenas 2.4 segundos.
+    * **Autonomia:** Até 650km com uma única carga completa.
+    * **Tecnologia:** Cockpit inteligente guiado por Inteligência Artificial.
+    * **Exclusividade:** Apenas 50 unidades destinadas ao mercado nacional.
+    """)
+    st.write("")
+    st.info("💡 Agende um Test-Drive exclusivo e sinta a aceleração contínua do motor elétrico.")
     
-    # Exibe a tabela formatada
-    st.dataframe(df, use_container_width=True)
+    # Gatilho de conversão (CTA)
+    if st.button("🏁 Quero Garantir Minha Unidade", type="primary", use_container_width=True):
+        st.toast("Preencha o formulário no final da página para receber o convite!", icon="🚀")
+
+with col_hero_img:
+    # Imagem de um carro esportivo elétrico laranja moderno
+    st.image("https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcR_gaaFUciXLzrzyoTJr8vcfgjDpsBzG0alpCqVQdkdI_2i6drLSgMvD3DjRjeqZpZl3KUdyRgabn_9BM4", 
+             caption="Apex Hyper-E Sport — Aerodinâmica e potência redefinidas.", use_container_width=True)
+
+st.divider()
+
+# 4. GALERIA E CARACTERÍSTICAS (O Showcase)
+st.markdown("<h2 style='text-align: center;'>Destaques da Experiência Premium</h2>", unsafe_allow_html=True)
+st.write("")
+
+col_g1, col_g2 = st.columns(2, gap="medium")
+
+with col_g1:
+    # Painel interno do carro de luxo
+    st.image("https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcSvJs8iFdP2s6U1vXb0oDrGYx3AdnzzI1Su7of_f6p_mba-vbWehOjIRoHiFZIrPvhUNapdesfrq_m63OY", 
+             caption="Interior artesanal com acabamento em couro legítimo e fibra de carbono.", use_container_width=True)
+
+with col_g2:
+    # Showroom de carros da concessionária
+    st.image("https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcQ8ErTKgtkwXjr9vQuiFg5JLebgMBLu90MRyhLAjbtuKkeNut2A_I6jGnpZcyWiiquru6gfcG98JeJElf0", 
+             caption="Visite nosso Showroom Conceito e viva o atendimento sob medida.", use_container_width=True)
+
+st.divider()
+
+# 5. FORMULÁRIO DE CAPTURA (Lead Generation)
+# Centralizar o formulário usando colunas vazias nas pontas
+_, col_form, _ = st.columns([2, 4, 2])
+
+with col_form:
+    st.markdown("<h3 style='text-align: center;'>Entre no Círculo Exclusivo</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: gray;'>Receba a ficha técnica completa e fale com um consultor especialista.</p>", unsafe_allow_html=True)
     
-    # Botão para limpar o "banco de dados"
-    if st.button("🗑️ Limpar Histórico"):
-        st.session_state.historico_orcamenentos = []
-        st.rerun()
-else:
-    st.info("Nenhum orçamento salvo ainda nesta sessão. Preencha os dados acima e clique em 'Salvar'.")
+    # Criando o formulário
+    with st.form("captura_leads"):
+        nome = st.text_input("Seu Nome Completo")
+        email = st.text_input("Seu Melhor E-mail")
+        telefone = st.text_input("Telefone com WhatsApp")
+        
+        modelo_interesse = st.selectbox(
+            "Modelo de Interesse", 
+            ["Apex Hyper-E Sport (Elétrico)", "Apex GrandTour V8 (Híbrido)", "Apex Horizon (SUV Premium)"]
+        )
+        
+        # Botão de envio dentro do formulário
+        enviado = st.form_submit_button("Me Inscrever na Lista VIP", use_container_width=True)
+        
+        if enviado:
+            if nome and email and telefone:
+                st.success(f"Obrigado, {nome}! Nossa equipe de especialistas entrará em contato em menos de 15 minutos.")
+                # Aqui em uma aula você ensina que esses dados seriam enviados para um CRM ou banco
+            else:
+                st.error("Por favor, preencha todos os campos para continuar.")
+
+# 6. RODAPÉ
+st.write("")
+st.divider()
+st.markdown("<p style='text-align: center; color: gray; font-size: 0.8rem;'>© 2026 Apex Motors S.A. Todos os direitos reservados. Fotos meramente ilustrativas.</p>", unsafe_allow_html=True)
